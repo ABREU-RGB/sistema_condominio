@@ -17,7 +17,7 @@
 
         <ul>
           <li :class="{ active: currentView === 'dashboard' }" @click="navigateTo('dashboard')">
-            <el-icon><Monitor /></el-icon> Dashboard
+            <el-icon><Monitor /></el-icon> Menú Principal
           </li>
           
           <div class="menu-divider">
@@ -113,6 +113,25 @@
                 <h4>84</h4>
               </div>
             </div>
+
+              <!-- Tarjeta Tasa BCV -->
+              <div class="stat-card bcv-card">
+                <div class="icon-box purple">
+                  <el-icon><Money /></el-icon>
+                </div>
+                <div class="stat-info">
+                  <p>Tasa BCV (USD)</p>
+                  <h4 v-if="tasaLoading">
+                    <el-icon class="is-loading"><Loading /></el-icon> Cargando...
+                  </h4>
+                  <h4 v-else-if="tasaError" class="error-text">Error al cargar</h4>
+                  <h4 v-else>Bs. {{ tasaBCV?.toFixed(2) }}</h4>
+                  <small v-if="tasaFechaActualizacion && !tasaLoading" class="fecha-actualizacion">
+                    Actualizado: {{ tasaFechaActualizacion }}
+                  </small>
+                </div>
+              </div>
+          </div>
           </div>
 
           <!-- VISTA PROPIETARIOS -->
@@ -154,7 +173,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { 
-  Monitor, House, Money, User, SwitchButton, Wallet, Warning, Fold, Expand 
+  Monitor, House, Money, User, SwitchButton, Wallet, Warning, Fold, Expand, Loading, Ticket, CreditCard, Calendar 
 } from '@element-plus/icons-vue'
 import TablaRecibos from './TablaRecibos.vue'
 import TablaPropietarios from './TablaPropietarios.vue'
@@ -214,7 +233,7 @@ const navigateTo = (view) => {
 // Título dinámico
 const pageTitle = computed(() => {
   switch(currentView.value) {
-    case 'dashboard': return 'Dashboard General';
+    case 'dashboard': return 'Menú Principal';
     case 'propietarios': return 'Directorio de Propietarios';
     case 'casas': return 'Número de casa';
     case 'recibos': return 'Control de Pagos y Recibos';
@@ -430,6 +449,7 @@ const pageTitle = computed(() => {
 .icon-box.green { background: #e1f3d8; color: #67c23a; }
 .icon-box.orange { background: #faecd8; color: #e6a23c; }
 .icon-box.blue { background: #d9ecff; color: #409eff; }
+.icon-box.purple { background: #f3e8ff; color: #9b59b6; }
 
 .stat-info p { margin: 0; color: #909399; font-size: 14px; }
 .stat-info h4 { margin: 5px 0 0; font-size: 20px; color: #303133; }
