@@ -1,5 +1,10 @@
 import { createApp } from 'vue'
-import './style.css'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import './style.css' // Restaurando estilos globales
 import App from './App.vue'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.use(ElementPlus) // 3. Usar Element Plus
+app.mount('#app')
