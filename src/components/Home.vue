@@ -7,30 +7,54 @@
       @click="sidebarOpen = false"
     ></div>
 
-    <!-- Sidebar -->
+      <!-- Sidebar Mejorado -->
     <aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
       <div class="logo-area">
-        <h2>Condominio</h2>
+        <div class="logo-icon">🏢</div>
+        <h2>Conjunto B Canaima</h2>
       </div>
       <nav class="sidebar-nav">
+
         <ul>
           <li :class="{ active: currentView === 'dashboard' }" @click="navigateTo('dashboard')">
             <el-icon><Monitor /></el-icon> Dashboard
           </li>
-          <li :class="{ active: currentView === 'propiedades' }" @click="navigateTo('propiedades')">
-            <el-icon><House /></el-icon> Propiedades
-          </li>
-          <li :class="{ active: currentView === 'recibos' }" @click="navigateTo('recibos')">
-            <el-icon><Money /></el-icon> Recibos
-          </li>
+          
+          <div class="menu-divider">
+            <span>Gestión Principal</span>
+          </div>
+          
           <li :class="{ active: currentView === 'propietarios' }" @click="navigateTo('propietarios')">
             <el-icon><User /></el-icon> Propietarios
           </li>
+          <li :class="{ active: currentView === 'propiedades' }" @click="navigateTo('propiedades')">
+            <el-icon><House /></el-icon> Casas
+          </li>
+          
+          <div class="menu-divider">
+            <span>Finanzas</span>
+          </div>
+          
+          <li :class="{ active: currentView === 'recibos' }" @click="navigateTo('recibos')">
+            <el-icon><Ticket /></el-icon> Recibos
+          </li>
+          <li :class="{ active: currentView === 'gastos' }" @click="navigateTo('gastos')">
+            <el-icon><CreditCard /></el-icon> Gastos
+          </li>
+          <li :class="{ active: currentView === 'cuotas' }" @click="navigateTo('cuotas')">
+            <el-icon><Calendar /></el-icon> Cuotas
+          </li>
+          
           <li class="logout" @click="$emit('logout')">
             <el-icon><SwitchButton /></el-icon> Cerrar Sesión
           </li>
         </ul>
       </nav>
+      
+      <!-- Versión en el sidebar -->
+      <div class="sidebar-footer">
+        <small>v1.0 - Sistema Ejecutivo</small>
+      </div>
     </aside>
 
     <!-- Main Content -->
@@ -52,32 +76,33 @@
         </div>
       </header>
 
-      <!-- Scrollable Content -->
+      <!-- Scrollable Content con transiciones -->
       <main class="content-body">
-        
-        <!-- VISTA DASHBOARD -->
-        <div v-if="currentView === 'dashboard'">
-          <!-- Widgets de Resumen -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="icon-box green">
-                <el-icon><Wallet /></el-icon>
+        <transition name="slide-fade" mode="out-in">
+          
+          <!-- VISTA DASHBOARD -->
+          <div v-if="currentView === 'dashboard'" key="dashboard">
+            <!-- Widgets de Resumen -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="icon-box green">
+                  <el-icon><Wallet /></el-icon>
+                </div>
+                <div class="stat-info">
+                  <p>Ingresos Mes</p>
+                  <h4>$ 1,250.00</h4>
+                </div>
               </div>
-              <div class="stat-info">
-                <p>Ingresos Mes</p>
-                <h4>$ 1,250.00</h4>
+              
+              <div class="stat-card">
+                <div class="icon-box orange">
+                  <el-icon><Warning /></el-icon>
+                </div>
+                <div class="stat-info">
+                  <p>Por Cobrar</p>
+                  <h4>$ 450.00</h4>
+                </div>
               </div>
-            </div>
-            
-            <div class="stat-card">
-              <div class="icon-box orange">
-                <el-icon><Warning /></el-icon>
-              </div>
-              <div class="stat-info">
-                <p>Por Cobrar</p>
-                <h4>$ 450.00</h4>
-              </div>
-            </div>
 
             <div class="stat-card">
               <div class="icon-box blue">
@@ -88,51 +113,39 @@
                 <h4>84</h4>
               </div>
             </div>
-
-            <!-- Tasa BCV -->
-            <div class="stat-card bcv-card">
-              <div class="icon-box purple">
-                <el-icon><Coin /></el-icon>
-              </div>
-              <div class="stat-info">
-                <p>Tasa BCV (USD/Bs)</p>
-                <h4 v-if="tasaLoading">Cargando...</h4>
-                <h4 v-else-if="tasaError" class="error-text">Error al cargar</h4>
-                <h4 v-else>Bs. {{ tasaBCV?.toFixed(2) }}</h4>
-                <small v-if="tasaFechaActualizacion && !tasaLoading" class="fecha-actualizacion">
-                  Act: {{ tasaFechaActualizacion }}
-                </small>
-              </div>
-            </div>
           </div>
 
-          <!-- Resumen Rápido -->
-          <div class="table-section">
-            <h4 style="margin: 0 0 20px 0; padding: 20px 20px 0 20px;">Últimos Movimientos</h4>
+          <!-- VISTA PROPIETARIOS -->
+          <div v-else-if="currentView === 'propietarios'" key="propietarios">
+            <TablaPropietarios />
+          </div>
+
+          <!-- VISTA PROPIEDADES (CASAS) -->
+          <div v-else-if="currentView === 'propiedades'" key="propiedades">
+            <TablaCasas />
+          </div>
+
+          <!-- VISTA RECIBOS -->
+          <div v-else-if="currentView === 'recibos'" key="recibos">
             <TablaRecibos />
           </div>
-        </div>
 
-        <!-- VISTA PROPIEDADES (CASAS) -->
-        <div v-else-if="currentView === 'propiedades'">
-          <TablaCasas />
-        </div>
+          <!-- VISTA GASTOS -->
+          <div v-else-if="currentView === 'gastos'" key="gastos">
+            <TablaGastos />
+          </div>
 
-        <!-- VISTA RECIBOS -->
-        <div v-else-if="currentView === 'recibos'">
-          <TablaRecibos />
-        </div>
+          <!-- VISTA CUOTAS -->
+          <div v-else-if="currentView === 'cuotas'" key="cuotas">
+            <TablaCuotas />
+          </div>
 
-        <!-- VISTA PROPIETARIOS -->
-        <div v-else-if="currentView === 'propietarios'">
-          <TablaPropietarios />
-        </div>
-
+        </transition>
       </main>
 
       <!-- Footer con el COLOR solicitado -->
       <footer class="footer">
-        <p>&copy; 2026 Sistema de Condominio - Versión Ejecutiva 1.0</p>
+        <p>&copy; 2026 Asoc. Civil Conjunto B Canaima - Versión Ejecutiva 1.0</p>
       </footer>
     </div>
   </div>
@@ -141,11 +154,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { 
-  Monitor, House, Money, User, SwitchButton, Wallet, Warning, Fold, Expand, Coin 
+  Monitor, House, Money, User, SwitchButton, Wallet, Warning, Fold, Expand 
 } from '@element-plus/icons-vue'
 import TablaRecibos from './TablaRecibos.vue'
 import TablaPropietarios from './TablaPropietarios.vue'
 import TablaCasas from './TablaCasas.vue'
+import TablaGastos from './TablaGastos.vue'
+import TablaCuotas from './TablaCuotas.vue'
 
 defineEmits(['logout'])
 
@@ -200,10 +215,12 @@ const navigateTo = (view) => {
 const pageTitle = computed(() => {
   switch(currentView.value) {
     case 'dashboard': return 'Dashboard General';
-    case 'propiedades': return 'Gestión de Unidades (Casas)';
-    case 'recibos': return 'Control de Pagos y Recibos';
     case 'propietarios': return 'Directorio de Propietarios';
-    default: return 'Sistema Condominio';
+    case 'casas': return 'Número de casa';
+    case 'recibos': return 'Control de Pagos y Recibos';
+    case 'gastos': return 'Registro de Gastos';
+    case 'cuotas': return 'Configuración de Cuotas';
+    default: return 'Asociación Civil Conjunto B Canaima';
   }
 })
 </script>
@@ -221,11 +238,11 @@ const pageTitle = computed(() => {
   display: none;
 }
 
-/* --- Sidebar --- */
+/* --- Sidebar Mejorado --- */
 .sidebar {
-  width: 250px;
-  background-color: var(--sidebar-bg);
-  border-right: 1px solid #2c3e50;
+  width: 260px;
+  background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+  border-right: 1px solid rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
@@ -233,17 +250,31 @@ const pageTitle = computed(() => {
 }
 
 .logo-area {
-  height: 60px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
+  background: rgba(0,0,0,0.1);
+}
+
+.logo-icon {
+  font-size: 28px;
+}
+
+.logo-area h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 20px 0;
+  padding: 15px 0;
+  overflow-y: auto;
 }
 
 .sidebar-nav ul {
@@ -252,35 +283,59 @@ const pageTitle = computed(() => {
   margin: 0;
 }
 
+.menu-divider {
+  padding: 15px 25px 8px;
+  color: rgba(255,255,255,0.4);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
 .sidebar-nav li {
-  padding: 15px 25px;
+  padding: 14px 25px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.25s ease;
   font-weight: 500;
+  font-size: 14px;
+  border-left: 3px solid transparent;
 }
 
 .sidebar-nav li:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.08);
   color: white;
+  border-left-color: rgba(255,255,255,0.3);
 }
 
 .sidebar-nav li.active {
   background: var(--user-gradient);
   color: white;
+  border-left-color: white;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .sidebar-nav li.logout {
-  margin-top: auto;
+  margin-top: 20px;
   color: #ff6b6b;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 20px;
 }
+
 .sidebar-nav li.logout:hover {
   background-color: rgba(255, 0, 0, 0.1);
   color: #ff4949;
+  border-left-color: #ff4949;
+}
+
+.sidebar-footer {
+  padding: 15px;
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 /* --- Main Structure --- */
@@ -336,11 +391,12 @@ const pageTitle = computed(() => {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
+  background: #f5f7fa;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
@@ -353,6 +409,12 @@ const pageTitle = computed(() => {
   display: flex;
   align-items: center;
   gap: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .icon-box {
@@ -368,7 +430,6 @@ const pageTitle = computed(() => {
 .icon-box.green { background: #e1f3d8; color: #67c23a; }
 .icon-box.orange { background: #faecd8; color: #e6a23c; }
 .icon-box.blue { background: #d9ecff; color: #409eff; }
-.icon-box.purple { background: #f3e1fa; color: #9b59b6; }
 
 .stat-info p { margin: 0; color: #909399; font-size: 14px; }
 .stat-info h4 { margin: 5px 0 0; font-size: 20px; color: #303133; }
@@ -402,12 +463,31 @@ const pageTitle = computed(() => {
   font-size: 12px;
 }
 
+/* --- Transiciones de vista --- */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
 /* ========== RESPONSIVE ========== */
 
 /* Tablet */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 200px;
+    width: 220px;
   }
   
   .content-body {
