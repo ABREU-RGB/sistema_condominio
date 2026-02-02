@@ -3,8 +3,8 @@
     <div class="login-content">
       <div class="glass-card">
         <div class="login-header">
-          <h1>Condominio <span class="highlight">Ejecutivo</span></h1>
-          <p>Bienvenido al sistema de gestión</p>
+          <h1>Conjunto B <span class="highlight">Canaima</span></h1>
+          <p>Bienvenido al sistema de gestión del condominio</p>
         </div>
 
         <el-form 
